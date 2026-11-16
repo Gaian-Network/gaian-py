@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gaian"
-version = "0.1.0"
+version = "2.0.0"
 description = "Python client for the Gaian Network API"
 requires-python = ">=3.11"
 dependencies = [
@@ -23,6 +23,7 @@ dev = [
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 100
@@ -31,3 +32,4 @@ target-version = "py311"
 [tool.mypy]
 python_version = "3.11"
 strict = true
+files = ["gaian"]
