@@ -199,7 +199,9 @@ except gaian.WebhookVerificationError:
     return 400
 ```
 
-A timestamp more than 300 seconds from the local clock, past or future, is rejected. Change it with `tolerance_seconds`.
+A timestamp more than 300 seconds from the local clock, past or future, is rejected. Change it with `tolerance_seconds`; a value that is zero, negative, NaN or infinite falls back to 300.
+
+Gaian can deliver the same event more than once. Store the `X-Gaian-Delivery` header of each delivery you have processed, and when one arrives again, answer 2xx without processing it a second time.
 
 ## Error handling
 
@@ -228,6 +230,8 @@ except gaian.GaianConnectionError:
 All of them except `ValueError` derive from `GaianError`. `is_not_found`, `is_conflict`, `is_unauthorized`, `is_forbidden` and `is_rate_limited` also recognise an error raised `from` a `GaianAPIError`.
 
 The SDK does not retry. Quote `request_id` when you contact Gaian support.
+
+Do not log `GaianAPIError.body` or `GaianInvalidResponseError.body` as is: a raw response body can carry personal data. Log `status_code`, `code`, `api_code` and `request_id` instead.
 
 ## Configuration
 

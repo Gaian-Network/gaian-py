@@ -81,6 +81,24 @@ def test_verify_webhook_honours_custom_tolerance(monkeypatch):
 
 
 @pytest.mark.parametrize(
+    "tolerance",
+    [0, -1, -300.5, float("nan"), float("inf"), float("-inf"), None, "60"],
+    ids=["zero", "negative", "negative_float", "nan", "inf", "neg_inf", "none", "str"],
+)
+@pytest.mark.parametrize(("offset", "accepted"), [(300, True), (-300, True), (301, False)])
+def test_verify_webhook_uses_default_for_unusable_tolerance(
+    monkeypatch, tolerance, offset, accepted
+):
+    monkeypatch.setattr(time, "time", lambda: float(NOW + offset))
+
+    if accepted:
+        verify(tolerance_seconds=tolerance)
+    else:
+        with pytest.raises(gaian.WebhookVerificationError):
+            verify(tolerance_seconds=tolerance)
+
+
+@pytest.mark.parametrize(
     "body", [FIRST["body"], json.loads(FIRST["body"])], ids=["str", "parsed_dict"]
 )
 def test_verify_webhook_takes_raw_bytes_only(body):
